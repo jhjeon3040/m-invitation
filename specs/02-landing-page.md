@@ -1,82 +1,247 @@
-# Landing Page Specification (High-End Premium)
+# Landing Page Specification
 
-## 1. Brand Philosophy & Concept
-- **Identity**: **"The Digital Atelier"** (디지털 아틀리에)
-- **Core Value**: **"Tangible Elegance"** (손에 잡힐 듯한 우아함). 디지털이지만 종이의 질감, 금박의 반짝임, 빛의 산란을 완벽하게 구현하여 아날로그의 깊이감을 선사함.
-- **Target Emotion**: 선망성(Desire), 자부심(Pride), 설렘(Flutter).
-  - *"여기서 만들면 하객들이 센스 있다고 하겠다."*
+## 1. Overview
 
-### 1.1. Visual Language: "Silent Luxury"
-- **Color Palette**:
-  - **Void Black**: `#0A0A0A` (깊이감 있는 검정, 배경)
-  - **Moonlight Silver**: `#E6E6E6` (은은한 달빛 같은 텍스트)
-  - **Champagne Gold**: `#D4AF37` (극소량의 포인트, 금박 효과)
-  - **Paper White**: `#F2F0EB` (질감이 느껴지는 따뜻한 화이트, 카드 영역)
-- **Typography**:
-  - **Title**: *Playfair Display* (Italic) - 우아하고 클래식한 세리프.
-  - **Subtitle**: *Cormorant Garamond* - 섬세하고 얇은 세리프.
-  - **Body**: *Montserrat* - 현대적이고 절제된 산세리프 (최소한으로 사용).
-- **Motion Identity**: **"Fluid & Magnetic"**. 물 흐르듯 부드럽지만, 중요한 순간에는 자석처럼 시선을 끌어당기는 묵직한 움직임.
+"연정" 서비스의 마케팅 랜딩 페이지 스펙입니다.
+방문자를 가입/전환으로 유도하는 것이 핵심 목표입니다.
 
-## 2. Cinematic User Journey (Section Details)
+### Design Direction: "Dreamy Romantic Editorial"
+| Attribute | Description |
+|-----------|-------------|
+| **Mood** | 밝고 따뜻한, 꿈꾸는 듯한 로맨틱 감성 |
+| **Visual** | 파스텔 톤 그라데이션, 부드러운 곡선, 풍부한 애니메이션 |
+| **Layout** | 매거진/에디토리얼 스타일의 세련된 구성 |
 
-### 2.1. Intro: The Opening (Hero Section)
-- **Concept**: **"Invitation to the Premiere"**. 영화 시사회 오프닝 시퀀스.
-- **Visual**:
-  - 어두운 화면에서 빛줄기(Light Ray)가 서서히 들어오며 종이의 거친 질감(Texture)을 훑고 지나감.
-  - 그 빛 속에서 금박으로 새겨진 "Invitation" 타이포그래피가 반짝임(WebGL Shader Effect).
-- **Copy**:
-  - *"Your Story, Masterfully Crafted."* (당신의 이야기, 장인의 손길로.)
-  - *"결혼식의 품격은 초대장에서 시작됩니다."*
-- **Interaction**: 스크롤 시 빛의 각도가 바뀌며 마치 실제 금박 카드를 손에 쥐고 기울이는 듯한 경험 제공.
+---
 
-### 2.2. Value Proposition: Digital Craftsmanship
-- **Concept**: **"Micro-Detailing"**.
-- **Layout**: 화면을 분할하여 왼쪽에는 실제 종이 청첩장, 오른쪽에는 모바일 청첩장을 배치하되, 경계가 모호하게 블렌딩.
-- **Visual Strategy**:
-  - **Macro Shot (초근접 촬영)**: 모바일 화면 속 폰트의 잉크 번짐 효과, 종이의 요철, 씰링 왁스의 입체감을 확대해서 보여줌.
-- **Copy**: *"종이의 온기, 디지털의 영원함. 그 경계를 지우다."*
+## 2. Color System
 
-### 2.3. Showcase: The Collection (Not Templates)
-- **Concept**: **"Museum Exhibition"**.
-- **Layout**: 가로로 길게 이어지는 **Horizontal Gallery**.
-- **Content**:
-  - 디자인을 '템플릿'이라 부르지 않고 **'오브제(Objet)'** 또는 **'컬렉션'**으로 명명.
-  - 예: *No.1 "Minimal Blanc"*, *No.2 "Royal Navy"*, *No.3 "Garden Whisper"*.
-- **Interaction**:
-  - 작품(청첩장) 가까이 마우스를 가져가면, 조명이 켜지듯 하이라이트 되며 주변이 어두워짐(Spotlight Effect).
-  - 클릭 시 모달이 아닌, 화면 전체가 해당 테마의 분위기(색감, BGM)로 전환되는 **Immersive Transition**.
+### Primary Palette
+| Name | Hex | CSS Variable | Usage |
+|------|-----|--------------|-------|
+| Cream | `#FDF8F3` | `--cream-bg` | 메인 배경 |
+| Peach Light | `#FFE4D6` | `--peach-light` | 섹션 배경 |
+| Peach Soft | `#FFDAB9` | `--peach-soft` | 그라데이션 |
+| Coral 400 | `#FF8E76` | `--coral-400` | Primary 액센트 |
+| Coral 500 | `#FF7A5C` | `--coral-500` | CTA 버튼 |
+| Rose Light | `#FFE4E9` | `--rose-light` | 서브 액센트 |
+| Rose Soft | `#FFB6C1` | `--rose-soft` | 장식 요소 |
+| Sage Green | `#A8C5A8` | `--sage-green` | 포인트 컬러 |
+| Brown 900 | `#5D4E4E` | `--brown-900` | 메인 텍스트 |
 
-### 2.4. Feature: The Magic Mirror (Instant Preview)
-- **Concept**: **"Fitting Room"**. 명품 옷을 시착해보는 경험.
-- **UX Flow**:
-  1.  고급스러운 프레임 안에 "가장 아름다운 웨딩 사진을 한 장 놓아주세요" 문구.
-  2.  사진 Drop 시, 로딩 바 대신 **"재단 중(Tailoring)..."** 이라는 문구와 함께 잉크가 번지는 애니메이션.
-  3.  완성 시, 3가지 무드의 컬렉션이 3D 공간에 둥둥 떠다니며 사용자 사진이 완벽하게 합성된 모습을 보여줌.
-  4.  **CTA**: *"이 컬렉션으로 소장하기"*
+### Gradient Presets
+```css
+bg-gradient-dreamy: linear-gradient(to bottom, #FDF8F3, #FFE4D6, #FFE4E9)
+bg-gradient-mesh: radial-gradient overlay pattern
+text-gradient-coral: linear-gradient(135deg, #FF8E76, #FF7A5C, #FFB6C1)
+```
 
-### 2.5. Editorial: Real Stories
-- **Concept**: **"Vogue Magazine Interview"**.
-- **Layout**: 잡지 에디토리얼 디자인. 실제 커플의 웨딩 화보와 그들이 만든 청첩장을 교차 배치.
-- **Content**:
-  - *"하객들에게 가장 많이 들었던 말은 '너답다'는 것이었어요."* - Shin & Kim.
-  - 단순 후기가 아닌, **스타일과 취향**에 대한 인터뷰 발췌.
+---
 
-### 2.6. Membership & Pricing
-- **Concept**: **"Private Club Invitation"**.
-- **Design**: 블랙 카드(Black Card) 느낌의 디자인.
-- **Copy**: *"특별한 분들을 위한, 단 하나의 멤버십."*
-- **Strategy**: 가격을 나열하기보다, **"All-Inclusive Premium"** 단일 플랜(또는 소수의 티어)으로 구성하여 고민의 여지를 줄이고 신뢰감 부여.
-- **Key Benefit (Premium)**:
-  - **Personalized Slug**: `blanc.kr/우리의-기록` 같이 기억하기 쉬운 고유 주소 제공.
-  - **Original Quality**: 4K 영상 및 원본 화질 영구 보존.
+## 3. Typography
 
-## 3. Technical Requirements for "High-End" Feel
-- **WebGL / Shaders**: (필수) 금박 효과, 종이 질감, 빛 반사(Refraction) 표현을 위해 React Three Fiber + Shaders 활용.
-- **Smooth Scroll (Lenis)**: (필수) 묵직하고 부드러운 스크롤감. 스크롤 멈춤 시 미세한 관성 유지.
-- **Sound Design**: (선택) 섹션 전환 시 아주 미세한 종이 넘기는 소리(ASMR)나 피아노 앰비언스 사운드.
-- **Font Loading**: 폰트 로딩 시 깜빡임(FOIT) 절대 금지. 프리로딩 및 페이드인 처리.
+| Role | Font Family | Weights | Usage |
+|------|-------------|---------|-------|
+| Display | Nanum Myeongjo | 400, 700 | 대제목, 브랜드명 |
+| Serif | Playfair Display | 400 Italic | 부제목, 강조 문구 |
+| Sans | Noto Sans KR | 400, 500, 700 | 본문, UI 요소 |
 
-## 4. Micro-Copy Strategy (Tone & Manner)
-- **Do**: "작품", "소장", "초대", "기록", "서약", "아름다운".
-- **Don't**: "기능", "템플릿", "전송", "입력", "빠른", "가성비".
+---
+
+## 4. Animation System
+
+### Motion Principles
+- **Smooth & Dreamy**: 부드럽고 꿈꾸는 듯한 움직임
+- **Delightful Details**: 미세한 인터랙션으로 즐거움 제공
+- **Performance First**: transform, opacity 위주로 60fps 유지
+
+### Decorative Animations
+| Name | Description | Duration |
+|------|-------------|----------|
+| FloatingPetal | 꽃잎이 떨어지는 애니메이션 | 15-22s loop |
+| FloatingHeart | 하트가 떠오르는 애니메이션 | 4-5s loop |
+| Sparkle | 별이 반짝이는 애니메이션 | 2-3s loop |
+| GradientBlob | 배경 그라데이션 blob 움직임 | 8-12s loop |
+
+### Interaction Animations
+| Trigger | Effect |
+|---------|--------|
+| Scroll | Parallax, Fade-in, Scale |
+| Hover | Glow, Scale (1.02-1.05), Y-translate (-2 to -8px) |
+| Click/Tap | Scale (0.98), Ripple |
+| Page Load | Staggered entrance (0.1-0.2s delay) |
+
+---
+
+## 5. Page Sections
+
+### 5.1. Header (Fixed)
+| Element | Spec |
+|---------|------|
+| Logo | "연정." 텍스트 로고 (Nanum Myeongjo) |
+| Navigation | 기능, 미리보기, 후기, 고객지원 |
+| CTA Button | "시작하기" (coral gradient, rounded-full) |
+| Mobile Menu | 햄버거 → 풀스크린 메뉴 |
+| Style | 흰 배경 + backdrop-blur, 스크롤 시 shadow |
+
+### 5.2. Hero Section
+| Element | Spec |
+|---------|------|
+| Layout | 2-column (Text + Phone Mockups) on desktop, stacked on mobile |
+| Badge | "프리미엄 모바일 청첩장" pill badge with pulse dot |
+| Headline | "연정" (gradient text) + "사랑의 시작을 담다" (italic) |
+| Subheadline | AI 초대글, 무료 체험 강조 |
+| Primary CTA | "무료로 시작하기" (coral gradient + glow + shimmer) |
+| Secondary CTA | "샘플 둘러보기" (white + border) |
+| Trust Badges | "3분 만에 완성", "모든 기능 무료" |
+| Phone Mockups | 2개 청첩장 목업 (floating animation, parallax) |
+| Decorations | FloatingPetal, Sparkle, rotating dashed circles |
+| Background | Gradient mesh + animated blobs |
+
+### 5.3. Features Section (7가지 특장점)
+| Element | Spec |
+|---------|------|
+| Layout | Bento Grid (asymmetric) |
+| Section Title | "연정만의 특별함" + underline SVG animation |
+
+#### Feature Cards
+| # | Title | Description | Visual |
+|---|-------|-------------|--------|
+| 1 | 초개인화 | 템플릿 교체가 아닌 Design System 기반 커스터마이징 | 🎨 |
+| 2 | 시네마틱 경험 | 몰입감 있는 인터랙션과 BGM 싱크 | 🎬 |
+| 3 | AI 초대글 | 키워드만 입력하면 감성 문구 자동 생성 | ✨ |
+| 4 | 라이브 웨딩 모드 | 예식장 스크린에 방명록 실시간 표시 | 📺 |
+| 5 | 시크릿 영상 편지 | 친구들만 볼 수 있는 숨겨진 콘텐츠 (Featured, full-width) | 🤫💕 |
+| 6 | 하객 인사이트 | 어떤 사진을 오래 봤는지 분석 | 📊 |
+| 7 | 개인화 URL | yeonjeong.kr/우리이름 형태 고유 주소 + QR | 🔗 |
+
+#### Card Interaction
+- Hover: scale(1.02), glow effect, gradient background intensify
+- Each card has unique gradient accent
+
+### 5.4. Preview Section (테마 미리보기)
+| Element | Spec |
+|---------|------|
+| Layout | Theme selector + Phone mockup |
+| Theme Tabs | 로맨틱 핑크, 클래식 아이보리, 모던 그레이, 가든 그린 |
+| Phone Mockup | 선택된 테마 실시간 반영, glow effect |
+| Interaction | Tab 클릭 시 부드러운 전환 애니메이션 |
+| Background | Rotating decorative circles |
+
+### 5.5. Testimonial Section (실제 커플 후기)
+| Element | Spec |
+|---------|------|
+| Layout | 3-column grid (desktop), carousel (mobile) |
+| Section Title | "실제 커플들의 이야기" + gradient underline |
+
+#### Testimonial Cards
+| Couple | Quote Focus |
+|--------|-------------|
+| 민영 & 지훈 | AI 초대글 감동 |
+| 수진 & 현우 | 라이브 모드 활용 |
+| 유나 & 성민 | 시크릿 콘텐츠 반응 |
+
+#### Card Design
+- Glass-morphism effect (bg-white/80 backdrop-blur)
+- Quote icon with gradient fill
+- Profile image with glow ring
+- Hover: scale, shadow-romantic
+
+#### Mobile Carousel
+- AnimatePresence for smooth transitions
+- Pagination dots with glow on active
+
+### 5.6. CTA Section (최종 전환)
+| Element | Spec |
+|---------|------|
+| Headline | "당신의 사랑 이야기를 가장 아름답게 전하세요" |
+| Subtext | "3분 만에 완성", "모든 기능 무료" 강조 |
+| Primary CTA | "무료로 시작하기" (large, shimmer effect) |
+| Secondary CTA | "1:1 문의하기" |
+| Trust Badges | "신용카드 불필요", "3분 만에 완성", "언제든 취소 가능" |
+| Social Proof | "10,000+ 커플이 연정과 함께했어요" + 별점 |
+| Background | Gradient mesh + FloatingHeart animations |
+
+### 5.7. Footer
+| Element | Spec |
+|---------|------|
+| Logo | "연정." + tagline |
+| Links | 서비스 소개, 요금제, 고객지원, FAQ |
+| Legal | 이용약관, 개인정보처리방침 |
+| Newsletter | 이메일 구독 폼 |
+| Social | Instagram, Blog 링크 |
+| Copyright | © 2025 연정. All rights reserved. |
+
+---
+
+## 6. Responsive Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| Mobile | < 640px | Single column, carousel for testimonials |
+| Tablet | 640-1024px | 2-column grids |
+| Desktop | > 1024px | Full layout, all decorations visible |
+
+### Mobile-First Considerations
+- 터치 타겟 최소 44x44px
+- 패딩 적절히 조절 (p-4 기본)
+- 장식 요소 일부 숨김 (hidden lg:block)
+- 캐러셀 대신 그리드 사용 시 스크롤 가능
+
+---
+
+## 7. Technical Implementation
+
+### Framework & Libraries
+| Purpose | Technology |
+|---------|------------|
+| Framework | Next.js 16 (App Router) |
+| Animation | Framer Motion |
+| Styling | Tailwind CSS v4 |
+| Smooth Scroll | CSS scroll-behavior: smooth |
+
+### Performance Targets
+| Metric | Target |
+|--------|--------|
+| LCP | < 2.5s |
+| FID | < 100ms |
+| CLS | < 0.1 |
+| PageSpeed (Mobile) | > 90 |
+
+### Animation Performance
+- GPU 가속 속성만 사용 (transform, opacity)
+- will-change 적절히 활용
+- Reduce motion 미디어 쿼리 대응
+- 뷰포트 밖 애니메이션 일시정지
+
+### Image Optimization
+- Next.js Image 컴포넌트 필수
+- WebP 자동 변환
+- Lazy loading 적용
+- Blur placeholder 사용
+
+---
+
+## 8. Conversion Optimization
+
+### Primary CTA Strategy
+| Location | CTA Text | Style |
+|----------|----------|-------|
+| Header | 시작하기 | Compact, coral |
+| Hero | 무료로 시작하기 | Large, gradient + glow |
+| CTA Section | 무료로 시작하기 | Extra large, shimmer |
+
+### Trust Signals
+- "3분 만에 완성" - 시간 투자 최소화
+- "모든 기능 무료" - 비용 장벽 제거
+- "신용카드 불필요" - 진입 장벽 제거
+- "10,000+ 커플" - 사회적 증거
+- 실제 커플 후기 - 신뢰도 구축
+
+### Micro-Copy Guidelines
+| Do | Don't |
+|----|-------|
+| 시작하기, 만들기 | 가입하기, 등록하기 |
+| 무료로 체험 | 무료 평가판 |
+| 커스터마이징 | 설정 변경 |
+| 나만의 청첩장 | 청첩장 생성 |

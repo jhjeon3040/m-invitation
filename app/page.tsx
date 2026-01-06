@@ -1,13 +1,21 @@
 import { Header } from "@/components/layout/Header";
 import { HeroSection } from "@/components/home/HeroSection";
-import { FeatureCards } from "@/components/home/FeatureCards";
+import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { PreviewSection } from "@/components/home/PreviewSection";
+import { TestimonialSection } from "@/components/home/TestimonialSection";
+import { CTASection } from "@/components/home/CTASection";
+import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white selection:bg-coral-500/20">
+    <main className="min-h-screen bg-white">
       <Header />
       <HeroSection />
-      <FeatureCards />
+      <FeaturesSection />
+      <PreviewSection />
+      <TestimonialSection />
+      <CTASection />
+      <Footer />
     </main>
   );
 }

@@ -1,0 +1,404 @@
+// Prisma Schema for "연정" - Premium Mobile Wedding Invitation Service
+// Tech: PostgreSQL + Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Provider {
+  KAKAO
+  NAVER
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING_DELETE
+  DELETED
+}
+
+enum InvitationStatus {
+  DRAFT
+  PUBLISHED
+  PRIVATE
+  EXPIRED
+}
+
+enum CouponType {
+  STANDARD
+  PROMO
+  PARTNER
+  GIFT
+}
+
+enum CouponStatus {
+  ACTIVE
+  USED
+  EXPIRED
+  REVOKED
+}
+
+enum Side {
+  GROOM
+  BRIDE
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  OPERATOR
+}
+
+// ============================================
+// USER & AUTH
+// ============================================
+
+model User {
+  id           String     @id @default(cuid())
+  
+  // OAuth Info
+  supabaseId   String     @unique  // Supabase auth.users.id
+  provider     Provider
+  providerId   String
+  
+  // Profile
+  email        String     @unique
+  name         String
+  profileImage String?
+  
+  // Status
+  status       UserStatus @default(ACTIVE)
+  deletedAt    DateTime?
+  
+  // Timestamps
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  lastLoginAt  DateTime?
+  
+  // Relations
+  invitations  Invitation[]
+  
+  @@unique([provider, providerId])
+  @@index([email])
+  @@index([supabaseId])
+}
+
+// ============================================
+// INVITATION (Core)
+// ============================================
+
+model Invitation {
+  id            String           @id @default(cuid())
+  userId        String
+  
+  // URL
+  slug          String?          @unique
+  
+  // Status
+  status        InvitationStatus @default(DRAFT)
+  publishedAt   DateTime?
+  expiresAt     DateTime?
+  
+  // Wedding Info
+  weddingDate   DateTime?
+  weddingTime   String?          // "14:00"
+  
+  // Venue
+  venueName     String?
+  venueAddress  String?
+  venueFloor    String?
+  venueLat      Float?
+  venueLng      Float?
+  
+  // Groom
+  groomName     String
+  groomFather   String?
+  groomMother   String?
+  groomOrder    String?          // "장남"
+  groomPhone    String?
+  
+  // Bride
+  brideName     String
+  brideFather   String?
+  brideMother   String?
+  brideOrder    String?          // "장녀"
+  bridePhone    String?
+  
+  // Design
+  theme         String           @default("romantic-pink")
+  customization Json?            // { primaryColor, fontStyle, layout }
+  
+  // Content
+  invitationMsg String?          @db.Text
+  aiGenerated   Boolean          @default(false)
+  
+  // Settings (JSON)
+  settings      Json             @default("{}")
+  // {
+  //   rsvp: { enabled, askMealCount, maxGuests },
+  //   guestbook: { enabled, allowSecret, requireApproval },
+  //   music: { enabled, trackId, autoPlay, volume }
+  // }
+  
+  // Accounts (JSON)
+  accounts      Json?
+  // {
+  //   groom: [{ bank, number, holder }],
+  //   bride: [{ bank, number, holder }]
+  // }
+  
+  // Secret Content
+  secretEnabled Boolean          @default(false)
+  secretType    String?          // "image" | "video"
+  secretUrl     String?
+  secretMessage String?
+  secretTrigger String?          // Gallery image ID
+  
+  // Coupon
+  couponId      String?          @unique
+  
+  // Timestamps
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  
+  // Relations
+  user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coupon           Coupon?               @relation(fields: [couponId], references: [id])
+  gallery          GalleryImage[]
+  rsvpResponses    RsvpResponse[]
+  guestbookEntries GuestbookEntry[]
+  analytics        InvitationAnalytics?
+  viewLogs         ViewLog[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([slug])
+  @@index([weddingDate])
+  @@index([userId, status])
+  @@index([status, weddingDate])
+}
+
+// ============================================
+// GALLERY
+// ============================================
+
+model GalleryImage {
+  id           String   @id @default(cuid())
+  invitationId String
+  
+  // Image Info
+  url          String
+  thumbnailUrl String
+  originalName String
+  size         Int      // bytes
+  width        Int
+  height       Int
+  
+  // Order & Cover
+  order        Int      @default(0)
+  isCover      Boolean  @default(false)
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  
+  // Relations
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  
+  @@index([invitationId])
+  @@index([invitationId, order])
+}
+
+// ============================================
+// COUPON
+// ============================================
+
+model Coupon {
+  id         String       @id @default(cuid())
+  
+  // Code
+  code       String       @unique
+  type       CouponType
+  
+  // Status
+  status     CouponStatus @default(ACTIVE)
+  
+  // Validity
+  validFrom  DateTime
+  validUntil DateTime
+  
+  // Usage
+  usedAt     DateTime?
+  usedBy     String?
+  
+  // Metadata
+  batchId    String?
+  note       String?
+  
+  // Timestamps
+  createdAt  DateTime     @default(now())
+  createdBy  String       // Admin ID
+  
+  // Relations
+  invitation Invitation?
+  
+  @@index([code])
+  @@index([status])
+  @@index([batchId])
+  @@index([validUntil])
+  @@index([status, validUntil])
+}
+
+// ============================================
+// RSVP
+// ============================================
+
+model RsvpResponse {
+  id           String   @id @default(cuid())
+  invitationId String
+  
+  // Response
+  name         String
+  phone        String?
+  attending    Boolean
+  mealCount    Int      @default(0)
+  side         Side
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  
+  // Relations
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  
+  @@index([invitationId])
+  @@index([invitationId, side])
+}
+
+// ============================================
+// GUESTBOOK
+// ============================================
+
+model GuestbookEntry {
+  id           String   @id @default(cuid())
+  invitationId String
+  
+  // Content
+  name         String
+  passwordHash String
+  message      String   @db.Text
+  
+  // Visibility
+  isSecret     Boolean  @default(false)
+  isApproved   Boolean  @default(true)
+  isHidden     Boolean  @default(false)
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  
+  // Relations
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  
+  @@index([invitationId])
+  @@index([invitationId, createdAt])
+}
+
+// ============================================
+// ANALYTICS
+// ============================================
+
+model InvitationAnalytics {
+  id           String   @id @default(cuid())
+  invitationId String   @unique
+  
+  // Views
+  totalViews   Int      @default(0)
+  uniqueViews  Int      @default(0)
+  
+  // Engagement
+  avgDuration  Int      @default(0) // seconds
+  galleryViews Int      @default(0)
+  
+  // Updated
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+}
+
+model ViewLog {
+  id           String   @id @default(cuid())
+  invitationId String
+  
+  // Visitor Info
+  sessionId    String
+  ipAddress    String?
+  userAgent    String?
+  referrer     String?
+  
+  // Timestamps
+  viewedAt     DateTime @default(now())
+  duration     Int?     // seconds
+  
+  // Relations
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  
+  @@index([invitationId])
+  @@index([invitationId, viewedAt])
+  @@index([sessionId])
+}
+
+// ============================================
+// ADMIN
+// ============================================
+
+model Admin {
+  id           String    @id @default(cuid())
+  
+  email        String    @unique
+  passwordHash String
+  name         String
+  
+  role         AdminRole @default(OPERATOR)
+  
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+  
+  @@index([email])
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  
+  // Actor
+  actorType    String   // "user" | "admin" | "system"
+  actorId      String?
+  
+  // Action
+  action       String   // "coupon.create", "invitation.publish", etc.
+  resourceType String   // "coupon", "invitation", "user"
+  resourceId   String?
+  
+  // Details
+  details      Json?
+  ipAddress    String?
+  
+  // Timestamp
+  createdAt    DateTime @default(now())
+  
+  @@index([actorType, actorId])
+  @@index([resourceType, resourceId])
+  @@index([action])
+  @@index([createdAt])
+}

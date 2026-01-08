@@ -7,6 +7,122 @@
 
 ---
 
+## Analytics Stack
+
+### Umami (Primary)
+
+오픈소스 프라이버시 중심 웹 분석 도구로 기본 트래픽 분석을 담당합니다.
+
+**역할:**
+- 페이지뷰 / 유니크 방문자 추적
+- 체류 시간 측정
+- 기기/브라우저/OS 정보
+- 유입 경로 (Referrer)
+- 커스텀 이벤트 (갤러리 조회, 공유 클릭 등)
+
+**장점:**
+- GDPR/CCPA 친화적 (쿠키 배너 불필요)
+- 가볍고 빠름 (~1KB 스크립트)
+- 셀프호스팅 가능 (비용 절감)
+- 청첩장별 분리 추적 가능
+
+### Custom DB (Secondary)
+
+비즈니스 로직과 밀접한 데이터는 자체 DB에서 관리합니다.
+
+**역할:**
+- RSVP 응답 관리 및 통계
+- 방명록 통계
+- 청첩장별 상세 설정
+- 데이터 내보내기 (엑셀)
+
+---
+
+## Umami 설정
+
+### 환경변수
+
+```env
+# Umami Cloud 사용 시
+NEXT_PUBLIC_UMAMI_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+NEXT_PUBLIC_UMAMI_SRC=https://cloud.umami.is/script.js
+
+# 셀프호스팅 시
+NEXT_PUBLIC_UMAMI_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+NEXT_PUBLIC_UMAMI_SRC=https://your-umami-instance.com/script.js
+```
+
+### 스크립트 삽입
+
+```tsx
+// app/layout.tsx
+import Script from 'next/script';
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <head>
+        <Script
+          src={process.env.NEXT_PUBLIC_UMAMI_SRC}
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          strategy="lazyOnload"
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+### 커스텀 이벤트 트래킹
+
+```tsx
+// lib/analytics.ts
+export function trackEvent(eventName: string, data?: Record<string, string | number>) {
+  if (typeof window !== 'undefined' && window.umami) {
+    window.umami.track(eventName, data);
+  }
+}
+
+// 사용 예시
+trackEvent('gallery_view', { imageIndex: 3, invitationId: 'abc123' });
+trackEvent('share_click', { channel: 'kakao' });
+trackEvent('rsvp_submit', { attending: 'yes', guestCount: 2 });
+trackEvent('account_copy', { side: 'groom' });
+```
+
+### 청첩장별 페이지 추적
+
+```tsx
+// app/i/[slug]/page.tsx
+// Umami는 자동으로 URL 경로를 추적하므로 /i/abc123, /i/xyz789 등
+// 각 청첩장별로 분리된 통계 확인 가능
+
+// 필요시 data-umami-event 속성으로 명시적 추적
+<button data-umami-event="rsvp-open" data-umami-event-invitation={slug}>
+  참석 의사 전달하기
+</button>
+```
+
+### TypeScript 타입 정의
+
+```tsx
+// types/umami.d.ts
+interface UmamiTracker {
+  track: (eventName: string, eventData?: Record<string, string | number>) => void;
+}
+
+declare global {
+  interface Window {
+    umami?: UmamiTracker;
+  }
+}
+
+export {};
+```
+
+---
+
 ## 주요 지표 (KPIs)
 
 | 지표 | 설명 | 계산 방식 |

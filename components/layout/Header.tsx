@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUser } from "@/lib/hooks/useUser";
 
 const navItems = [
   { label: "기능", href: "#features" },
@@ -15,6 +16,7 @@ const navItems = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, loading } = useUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -82,12 +84,31 @@ export function Header() {
               transition={{ delay: 0.3 }}
               className="hidden md:flex items-center space-x-4"
             >
-              <button className="text-sm text-gray-500 hover:text-brown-900 transition-colors">
-                로그인
-              </button>
-              <button className="px-6 py-2.5 bg-coral-500 text-white text-sm font-medium rounded-full hover:bg-coral-600 transition-all duration-300 shadow-sm hover:shadow-coral">
-                무료로 시작하기
-              </button>
+              {loading ? (
+                <div className="w-24 h-9 bg-gray-100 rounded-full animate-pulse" />
+              ) : user ? (
+                <Link
+                  href="/dashboard"
+                  className="px-6 py-2.5 bg-coral-500 text-white text-sm font-medium rounded-full hover:bg-coral-600 transition-all duration-300 shadow-sm hover:shadow-coral"
+                >
+                  대시보드
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-sm text-gray-500 hover:text-brown-900 transition-colors"
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="px-6 py-2.5 bg-coral-500 text-white text-sm font-medium rounded-full hover:bg-coral-600 transition-all duration-300 shadow-sm hover:shadow-coral"
+                  >
+                    무료로 시작하기
+                  </Link>
+                </>
+              )}
             </motion.div>
 
             <button
@@ -176,13 +197,32 @@ export function Header() {
                 transition={{ delay: 0.5 }}
                 className="flex flex-col items-center space-y-4 pb-8"
               >
-                <button className="text-sm text-gray-500">로그인</button>
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full max-w-xs bg-coral-500 text-white py-4 rounded-full font-medium text-lg hover:bg-coral-600 transition-colors"
-                >
-                  무료로 시작하기
-                </button>
+                {user ? (
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full max-w-xs bg-coral-500 text-white py-4 rounded-full font-medium text-lg hover:bg-coral-600 transition-colors text-center"
+                  >
+                    대시보드
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-sm text-gray-500"
+                    >
+                      로그인
+                    </Link>
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full max-w-xs bg-coral-500 text-white py-4 rounded-full font-medium text-lg hover:bg-coral-600 transition-colors text-center"
+                    >
+                      무료로 시작하기
+                    </Link>
+                  </>
+                )}
               </motion.div>
             </div>
           </motion.div>

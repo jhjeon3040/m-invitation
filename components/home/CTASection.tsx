@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 
 const FloatingHeart = ({ delay, left, size }: { delay: number; left: string; size: number }) => (
   <motion.div
@@ -131,26 +132,28 @@ export function CTASection() {
             transition={{ delay: 0.8 }}
             className="flex flex-col sm:flex-row gap-5 justify-center pt-4"
           >
-            <motion.button
-              whileHover={{ scale: 1.05, y: -3 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative px-12 py-6 bg-gradient-to-r from-coral-500 to-coral-400 text-white text-xl font-medium rounded-full overflow-hidden shadow-2xl shadow-coral-500/30"
-            >
-              <motion.span
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-              />
-              <span className="relative z-10 flex items-center justify-center gap-3">
-                무료로 시작하기
+            <Link href="/login">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative px-12 py-6 bg-gradient-to-r from-coral-500 to-coral-400 text-white text-xl font-medium rounded-full overflow-hidden shadow-2xl shadow-coral-500/30 cursor-pointer"
+              >
                 <motion.span
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  →
-                </motion.span>
-              </span>
-            </motion.button>
+                  animate={{ x: ["-100%", "200%"] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                />
+                <span className="relative z-10 flex items-center justify-center gap-3">
+                  무료로 시작하기
+                  <motion.span
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    →
+                  </motion.span>
+                </span>
+              </motion.div>
+            </Link>
 
             <motion.button
               whileHover={{ scale: 1.05, y: -3 }}

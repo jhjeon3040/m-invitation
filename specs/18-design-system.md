@@ -7,48 +7,59 @@
 
 ---
 
+## UI Stack
+
+| Layer | Technology | 용도 |
+|-------|------------|------|
+| **Styling** | Tailwind CSS v4 | 유틸리티 기반 스타일링 |
+| **Components** | shadcn/ui | 재사용 가능한 UI 컴포넌트 |
+| **Primitives** | Radix UI | 접근성 높은 헤드리스 컴포넌트 |
+| **Animation** | Framer Motion | 선언적 애니메이션 |
+| **Icons** | Lucide React | 오픈소스 아이콘 라이브러리 |
+
+### 설치된 shadcn/ui 컴포넌트
+- `button` - 버튼
+- `dialog` - 모달/다이얼로그
+- `dropdown-menu` - 드롭다운 메뉴
+- `input` - 입력 필드
+- `select` - 셀렉트 박스
+- `tabs` - 탭
+- `sonner` - 토스트 알림
+
+### 컴포넌트 추가 방법
+```bash
+npx shadcn@latest add [component-name]
+```
+
+---
+
 ## 1. Design Tokens
 
 ### 1.1. Colors
 
-#### Brand Colors
+#### Brand Colors (White + Pastel Theme)
 ```css
 :root {
   /* Primary - Coral */
-  --color-primary-50: #FFF5F3;
-  --color-primary-100: #FFE4D6;
-  --color-primary-200: #FFCBB4;
-  --color-primary-300: #FFB192;
-  --color-primary-400: #FF8E76;
-  --color-primary-500: #FF7A5C;  /* Main */
-  --color-primary-600: #E65A3E;
-  --color-primary-700: #CC4A32;
-  --color-primary-800: #A33A27;
-  --color-primary-900: #7A2C1D;
+  --color-primary-400: #FFA08C;
+  --color-primary-500: #FF8E76;  /* Main */
+  --color-primary-600: #E67A64;
   
   /* Secondary - Rose */
-  --color-secondary-50: #FFF5F7;
-  --color-secondary-100: #FFE4E9;
-  --color-secondary-200: #FFCCD5;
-  --color-secondary-300: #FFB6C1;  /* Rose Soft */
-  --color-secondary-400: #FF9AAA;
-  --color-secondary-500: #FF7A8E;
-  --color-secondary-600: #E65A6E;
-  --color-secondary-700: #CC4A5E;
-  --color-secondary-800: #A33A4A;
-  --color-secondary-900: #7A2C38;
+  --color-secondary: #FFF0F3;    /* Rose Light */
+  --color-rose-soft: #F5C6CB;
+  --color-rose-light: #FFF0F3;
   
   /* Accent - Sage */
-  --color-accent-50: #F5F9F5;
-  --color-accent-100: #E8F0E8;
-  --color-accent-200: #D4E4D4;
-  --color-accent-300: #A8C5A8;  /* Sage Green */
-  --color-accent-400: #8AB58A;
-  --color-accent-500: #6CA56C;
-  --color-accent-600: #588A58;
-  --color-accent-700: #487048;
-  --color-accent-800: #3A5A3A;
-  --color-accent-900: #2C442C;
+  --color-accent: #E8F4EF;       /* Sage Light */
+  --color-sage-green: #B8D4C8;
+  --color-sage-light: #E8F4EF;
+  
+  /* Background */
+  --color-cream-bg: #FDF8F3;
+  --color-cream-dark: #F5EDE5;
+  --color-peach-light: #FFF5F0;
+  --color-peach-soft: #FFEFE5;
 }
 ```
 
@@ -56,28 +67,30 @@
 ```css
 :root {
   /* Background */
-  --bg-cream: #FDF8F3;
-  --bg-peach-light: #FFE4D6;
-  --bg-peach-soft: #FFDAB9;
-  --bg-rose-light: #FFE4E9;
-  --bg-white: #FFFFFF;
+  --background: #FFFFFF;
+  --muted: #FDF8F3;           /* Cream */
   
   /* Text */
-  --text-primary: #5D4E4E;    /* Brown 900 */
-  --text-secondary: #8B7E7E;  /* Brown 600 */
-  --text-tertiary: #A89999;   /* Brown 400 */
-  --text-disabled: #C4BABA;   /* Brown 300 */
-  --text-inverse: #FFFFFF;
+  --foreground: #3D3632;      /* Brown 900 - Primary text */
+  --muted-foreground: #7A716A; /* Brown 500 - Secondary text */
+  --color-brown-900: #3D3632;
+  --color-brown-700: #5C544E;
+  --color-brown-500: #7A716A;
+  
+  /* Gray Scale */
+  --color-gray-600: #6B7280;
+  --color-gray-400: #9CA3AF;
+  --color-gray-200: #E5E7EB;
+  --color-gray-100: #F3F4F6;
   
   /* Border */
-  --border-light: #F0E8E4;
-  --border-default: #E8DCD4;
-  --border-strong: #D4C4BC;
+  --border: #F5EDE5;
+  --input: #F5EDE5;
   
   /* Status */
+  --destructive: #EF4444;
   --color-success: #4CAF50;
   --color-warning: #FF9800;
-  --color-error: #F44336;
   --color-info: #2196F3;
 }
 ```
@@ -87,11 +100,13 @@
 #### Font Families
 ```css
 :root {
-  --font-display: 'Nanum Myeongjo', serif;
-  --font-serif: 'Playfair Display', serif;
-  --font-sans: 'Noto Sans KR', -apple-system, sans-serif;
+  --font-display: 'Nanum Myeongjo', ui-serif, Georgia, serif;
+  --font-serif: 'Playfair Display', ui-serif, Georgia, serif;
+  --font-sans: 'Noto Sans KR', ui-sans-serif, system-ui, sans-serif;
 }
 ```
+
+> **Note**: Next.js `next/font/google`로 로딩되며, CSS 변수로 적용됩니다.
 
 #### Font Sizes
 ```css
@@ -168,19 +183,35 @@
 ### 1.5. Shadows
 
 ```css
-:root {
-  --shadow-sm: 0 1px 2px 0 rgba(93, 78, 78, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(93, 78, 78, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(93, 78, 78, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(93, 78, 78, 0.1);
-  
-  /* Romantic Shadows (colored) */
-  --shadow-romantic: 0 10px 40px -10px rgba(255, 122, 92, 0.3);
-  --shadow-romantic-lg: 0 20px 60px -15px rgba(255, 122, 92, 0.4);
-  
-  /* Glow Effects */
-  --glow-primary: 0 0 20px rgba(255, 122, 92, 0.4);
-  --glow-secondary: 0 0 20px rgba(255, 182, 193, 0.4);
+/* Utility Classes in globals.css */
+
+.shadow-dreamy {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 25px -5px rgba(255, 142, 118, 0.1),
+    0 20px 50px -12px rgba(245, 198, 203, 0.15);
+}
+
+.shadow-romantic {
+  box-shadow: 
+    0 25px 50px -12px rgba(255, 142, 118, 0.15),
+    0 0 0 1px rgba(255, 142, 118, 0.05);
+}
+
+/* Glow Effects */
+.glow-coral {
+  box-shadow: 
+    0 0 20px rgba(255, 142, 118, 0.3),
+    0 0 40px rgba(255, 142, 118, 0.15),
+    0 0 60px rgba(255, 142, 118, 0.05);
+}
+
+.glow-coral-sm {
+  box-shadow: 0 0 15px rgba(255, 142, 118, 0.25);
+}
+
+.glow-rose {
+  box-shadow: 0 0 30px rgba(245, 198, 203, 0.4);
 }
 ```
 
@@ -200,21 +231,37 @@
 }
 ```
 
-### 1.7. Transitions
+### 1.7. Transitions & Easing
 
 ```css
 :root {
-  --transition-fast: 150ms ease;
-  --transition-normal: 200ms ease;
-  --transition-slow: 300ms ease;
-  --transition-slower: 500ms ease;
-  
-  /* Easing Functions */
-  --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
+```
+
+### 1.8. Animation Classes
+
+```css
+/* globals.css에 정의된 애니메이션 */
+.animate-fade-up      /* 아래에서 위로 페이드 인 */
+.animate-fade-in      /* 페이드 인 */
+.animate-float        /* 둥둥 떠다니는 효과 */
+.animate-float-slow   /* 느린 플로팅 */
+.animate-drift        /* 드리프트 효과 */
+.animate-petal        /* 꽃잎 떨어지는 효과 */
+.animate-sparkle      /* 반짝이는 효과 */
+.animate-pulse-glow   /* 글로우 펄스 */
+.animate-shimmer      /* 쉬머 효과 */
+.animate-gradient     /* 그라데이션 이동 */
+.animate-bounce-soft  /* 부드러운 바운스 */
+.animate-wiggle       /* 흔들림 */
+.animate-scale-pulse  /* 스케일 펄스 */
+
+/* Animation Delays */
+.delay-100 ~ .delay-1000
 ```
 
 ---
@@ -757,18 +804,15 @@ const staggerContainer = {
 
 ```
 components/
-├── ui/                    # Primitive components
-│   ├── Button.tsx
-│   ├── Input.tsx
-│   ├── Select.tsx
-│   ├── Card.tsx
-│   ├── Modal.tsx
-│   ├── Toast.tsx
-│   ├── Tabs.tsx
-│   ├── Accordion.tsx
-│   ├── Badge.tsx
-│   ├── Spinner.tsx
-│   └── Skeleton.tsx
+├── ui/                    # shadcn/ui + Radix 기반 컴포넌트
+│   ├── button.tsx         # shadcn/ui
+│   ├── dialog.tsx         # shadcn/ui + Radix
+│   ├── dropdown-menu.tsx  # shadcn/ui + Radix
+│   ├── input.tsx          # shadcn/ui
+│   ├── select.tsx         # shadcn/ui + Radix
+│   ├── tabs.tsx           # shadcn/ui + Radix
+│   ├── sonner.tsx         # shadcn/ui (Toast)
+│   └── SmoothScroll.tsx   # Custom
 │
 ├── forms/                 # Form-related components
 │   ├── FormGroup.tsx
@@ -778,10 +822,17 @@ components/
 │   └── FormField.tsx
 │
 ├── layout/                # Layout components
-│   ├── Container.tsx
-│   ├── Grid.tsx
-│   ├── Stack.tsx
-│   └── Divider.tsx
+│   ├── Header.tsx
+│   ├── Footer.tsx
+│   └── Container.tsx
+│
+├── home/                  # Landing page components
+│   ├── HeroSection.tsx
+│   ├── CTASection.tsx
+│   └── ...
+│
+├── features/              # Feature-specific components
+│   └── ...
 │
 └── patterns/              # Composite patterns
     ├── EmptyState.tsx
@@ -791,36 +842,47 @@ components/
 
 ---
 
-## 11. Tailwind Configuration
+## 11. Tailwind CSS v4 Configuration
 
-```js
-// tailwind.config.ts
-export default {
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          50: '#FFF5F3',
-          // ... (as defined above)
-          500: '#FF7A5C',
-          // ...
-        },
-        // ...
-      },
-      fontFamily: {
-        display: ['Nanum Myeongjo', 'serif'],
-        serif: ['Playfair Display', 'serif'],
-        sans: ['Noto Sans KR', 'sans-serif'],
-      },
-      boxShadow: {
-        romantic: '0 10px 40px -10px rgba(255, 122, 92, 0.3)',
-        'romantic-lg': '0 20px 60px -15px rgba(255, 122, 92, 0.4)',
-      },
-      animation: {
-        'float': 'float 3s ease-in-out infinite',
-        'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
-      },
-    },
-  },
-};
+Tailwind CSS v4는 CSS 기반 설정을 사용합니다. `globals.css`의 `@theme` 블록에서 커스텀 토큰을 정의합니다.
+
+```css
+/* globals.css */
+@theme {
+  --font-display: var(--font-nanum-myeongjo), ui-serif, Georgia, serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-sans: var(--font-noto-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --color-cream-bg: #FDF8F3;
+  --color-coral-400: #FFA08C;
+  --color-coral-500: #FF8E76;
+  --color-coral-600: #E67A64;
+  --color-rose-soft: #F5C6CB;
+  --color-sage-green: #B8D4C8;
+  --color-brown-900: #3D3632;
+  /* ... */
+
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+```
+
+### shadcn/ui 테마 변수
+
+`:root`에서 shadcn/ui 호환 CSS 변수를 정의합니다:
+
+```css
+:root {
+  --background: #FFFFFF;
+  --foreground: #3D3632;
+  --primary: #FF8E76;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FFF0F3;
+  --muted: #FDF8F3;
+  --accent: #E8F4EF;
+  --destructive: #EF4444;
+  --border: #F5EDE5;
+  --ring: #FF8E76;
+}
 ```

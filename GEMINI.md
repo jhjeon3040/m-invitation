@@ -5,7 +5,23 @@
 - **Language**: TypeScript
 - **UI Library**: React 19
 - **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui + Radix UI
+- **Animation**: Framer Motion
+- **Icons**: Lucide React
+- **Database**: Supabase PostgreSQL + Prisma ORM
+- **Auth**: Supabase Auth (Kakao, Naver OAuth)
+- **Analytics**: Umami (프라이버시 중심)
 - **Linter**: ESLint
+
+## Design System (White + Pastel Theme)
+| 역할 | 색상 | CSS Variable |
+|------|------|--------------|
+| Primary | `#FF8E76` 코랄 | `--primary` |
+| Secondary | `#FFF0F3` 로즈 | `--secondary` |
+| Accent | `#E8F4EF` 세이지 | `--accent` |
+| Muted | `#FDF8F3` 크림 | `--muted` |
+| Background | `#FFFFFF` 화이트 | `--background` |
+| Foreground | `#3D3632` 브라운 | `--foreground` |
 
 ## Clean Code Habits (MUST FOLLOW)
 
@@ -58,6 +74,15 @@
     - `components/ui/`: 버튼, 인풋 등 기본 UI 요소 (Atomic)
     - `components/features/`: 특정 기능 관련 복합 컴포넌트
   - `lib/` or `utils/`: 유틸리티 함수 및 설정
+
+## ⚠️ Agent Instructions (MUST FOLLOW)
+
+### Frontend 작업 시 `/frontend-design` 스킬 사용 필수
+프론트엔드 UI/UX 컴포넌트를 만들거나 수정할 때는 반드시 `/frontend-design` 스킬을 먼저 로드하세요.
+```
+skill(name="frontend-design")
+```
+이 스킬은 고품질의 디자인을 생성하는 데 특화되어 있습니다.
 
 ## ✅ Self-Review Checklist
 - [ ] 모바일 화면에서 레이아웃이 깨지지 않는가?

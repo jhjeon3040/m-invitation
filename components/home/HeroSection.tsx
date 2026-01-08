@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 import { PhoneMockup } from "./PhoneMockup";
 
 const FloatingPetal = ({ delay, duration, left, size }: { delay: number; duration: number; left: string; size: number }) => (
@@ -195,32 +196,36 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.9 }}
             className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4"
           >
-            <motion.button 
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative px-10 py-5 bg-gradient-to-r from-coral-500 to-coral-400 text-white text-lg font-medium rounded-full overflow-hidden btn-romantic glow-coral"
-            >
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                무료로 시작하기
-                <motion.svg 
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="w-5 h-5" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </motion.svg>
-              </span>
-            </motion.button>
-            <motion.button 
-              whileHover={{ scale: 1.03, backgroundColor: "rgba(255, 142, 118, 0.08)" }}
-              whileTap={{ scale: 0.98 }}
-              className="px-10 py-5 bg-white/80 backdrop-blur-sm text-brown-900 text-lg font-medium rounded-full border border-coral-200 hover:border-coral-300 transition-all duration-300 shadow-dreamy"
-            >
-              샘플 둘러보기
-            </motion.button>
+            <Link href="/login">
+              <motion.div 
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative px-10 py-5 bg-gradient-to-r from-coral-500 to-coral-400 text-white text-lg font-medium rounded-full overflow-hidden btn-romantic glow-coral cursor-pointer"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  무료로 시작하기
+                  <motion.svg 
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-5 h-5" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </motion.svg>
+                </span>
+              </motion.div>
+            </Link>
+            <Link href="/demo/journey">
+              <motion.div 
+                whileHover={{ scale: 1.03, backgroundColor: "rgba(255, 142, 118, 0.08)" }}
+                whileTap={{ scale: 0.98 }}
+                className="px-10 py-5 bg-white/80 backdrop-blur-sm text-brown-900 text-lg font-medium rounded-full border border-coral-200 hover:border-coral-300 transition-all duration-300 shadow-dreamy cursor-pointer"
+              >
+                샘플 둘러보기
+              </motion.div>
+            </Link>
           </motion.div>
 
           <motion.div

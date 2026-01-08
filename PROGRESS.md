@@ -131,13 +131,63 @@
 
 ---
 
-## Phase 3: 수익화 (대기)
+## Phase 3: 수익화 ✅ (완료)
 
 | 스펙 | 상태 | 구현 파일 | 비고 |
 |------|------|-----------|------|
-| 05-coupon-publishing.md | ⏳ 대기 | - | 쿠폰 발행 시스템 |
+| 05-coupon-publishing.md | ✅ 완료 | `app/api/coupons/*`, `app/api/invitations/[id]/publish/*`, `components/editor/PublishModal.tsx` | 쿠폰 검증, 청첩장 발행 |
+| 11-user-dashboard.md | ✅ 완료 | `app/dashboard/[id]/rsvp/*`, `app/dashboard/[id]/guestbook/*`, `components/dashboard/ShareModal.tsx` | RSVP/방명록 관리, QR공유 |
+| 09-seo-social-sharing.md | ✅ 완료 | `app/api/og/[slug]/*`, `app/sitemap.ts`, `app/robots.ts`, `lib/kakao/share.ts` | OG이미지, SEO, 카카오공유 |
 | 21-coupon-acquisition.md | ⏳ 대기 | - | 네이버 스마트스토어 연동 |
-| 11-user-dashboard.md | ⏳ 대기 | - | 통계, RSVP 관리 |
+
+### Phase 3 구현 상세
+
+#### Coupon System (05-coupon-publishing.md)
+- [x] 쿠폰 검증 API (`app/api/coupons/validate/route.ts`)
+  - 쿠폰 코드 검증
+  - 유효기간, 사용 상태 확인
+- [x] 청첩장 발행 API (`app/api/invitations/[id]/publish/route.ts`)
+  - 쿠폰 연결 및 사용 처리
+  - 슬러그 생성 (신랑-신부-랜덤)
+  - 상태 업데이트 (DRAFT → PUBLISHED)
+- [x] 발행 모달 UI (`components/editor/PublishModal.tsx`)
+  - 쿠폰 입력 및 검증
+  - 발행 완료 후 공유 안내
+
+#### User Dashboard (11-user-dashboard.md)
+- [x] RSVP 관리 API (`app/api/invitations/[id]/rsvp/route.ts`)
+  - GET: RSVP 목록 조회 (페이지네이션)
+  - DELETE: RSVP 삭제
+- [x] Guestbook 관리 API (`app/api/invitations/[id]/guestbook/route.ts`)
+  - GET: 방명록 목록 조회
+  - PATCH: 숨기기/보이기 토글
+  - DELETE: 방명록 삭제
+- [x] RSVP 관리 페이지 (`app/dashboard/[id]/rsvp/page.tsx`)
+  - 참석 통계 요약 (참석/불참/총 식사 인원)
+  - 신랑/신부측 필터링
+  - CSV 내보내기
+- [x] Guestbook 관리 페이지 (`app/dashboard/[id]/guestbook/page.tsx`)
+  - 숨기기/삭제 기능
+  - 비밀 메시지 표시
+- [x] 공유 모달 (`components/dashboard/ShareModal.tsx`)
+  - QR 코드 생성 (PNG/SVG 다운로드)
+  - 카카오톡 공유
+  - 링크 복사
+
+#### SEO & Social Sharing (09-seo-social-sharing.md)
+- [x] OG 이미지 생성 API (`app/api/og/[slug]/route.tsx`)
+  - @vercel/og 사용
+  - 800x400px 동적 이미지
+  - 커버 사진 + 이름 + 날짜 + 장소
+- [x] 청첩장 메타데이터 개선 (`app/i/[slug]/page.tsx`)
+  - Open Graph 태그 (title, description, image)
+  - Twitter Card 지원
+  - noindex (검색 엔진 제외)
+- [x] 카카오 공유 유틸리티 (`lib/kakao/share.ts`)
+  - SDK 초기화
+  - sendDefault API 연동
+- [x] sitemap.xml (`app/sitemap.ts`)
+- [x] robots.txt (`app/robots.ts`)
 
 ---
 

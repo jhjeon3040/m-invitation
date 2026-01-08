@@ -1,39 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/db";
 import { InvitationView } from "./InvitationView";
-
-const MOCK_INVITATION = {
-  id: "1",
-  slug: "minyoung-jihoon",
-  groomName: "지훈",
-  brideName: "민영",
-  groomFather: "김철수",
-  groomMother: "이영희",
-  brideFather: "박준혁",
-  brideMother: "최수정",
-  weddingDate: "2025-05-16",
-  weddingTime: "14:00",
-  venueName: "더채플앳청담",
-  venueAddress: "서울 강남구 선릉로 158길 11",
-  venueFloor: "3층 그랜드홀",
-  venueLat: 37.524,
-  venueLng: 127.049,
-  message: `서로에게 스며든 두 사람이
-사랑으로 하나 되려 합니다.
-
-바쁘시더라도 귀한 걸음 하시어
-축복해 주시면 감사하겠습니다.`,
-  theme: "romantic-pink",
-  rsvpEnabled: true,
-  guestbookEnabled: true,
-  coverImage: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800",
-  gallery: [
-    "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600",
-    "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=600",
-    "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=600",
-    "https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=600",
-  ],
-};
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -41,36 +9,120 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const invitation = slug === "minyoung-jihoon" ? MOCK_INVITATION : null;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://yeonjeong.kr";
+
+  const invitation = await prisma.invitation.findUnique({
+    where: { slug },
+    select: {
+      groomName: true,
+      brideName: true,
+      weddingDate: true,
+      weddingTime: true,
+      venueName: true,
+    },
+  });
 
   if (!invitation) {
     return { title: "청첩장을 찾을 수 없습니다" };
   }
 
-  const title = `${invitation.brideName} ♥ ${invitation.groomName} 결혼합니다`;
-  const description = `${invitation.weddingDate} ${invitation.weddingTime} ${invitation.venueName}`;
+  const title = `${invitation.groomName} ♥ ${invitation.brideName} 결혼합니다`;
+  const weddingDateStr = invitation.weddingDate
+    ? new Date(invitation.weddingDate).toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+  const description = [weddingDateStr, invitation.weddingTime, invitation.venueName]
+    .filter(Boolean)
+    .join(" | ");
+
+  const ogImageUrl = `${baseUrl}/api/og/${slug}`;
 
   return {
     title,
     description,
+    robots: {
+      index: false,
+      follow: false,
+    },
     openGraph: {
+      type: "website",
       title,
       description,
-      images: [invitation.coverImage],
-      type: "website",
+      url: `${baseUrl}/i/${slug}`,
+      siteName: "연정",
+      locale: "ko_KR",
+      images: [
+        {
+          url: ogImageUrl,
+          width: 800,
+          height: 400,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [invitation.coverImage],
+      images: [ogImageUrl],
     },
+  };
+}
+
+async function getInvitation(slug: string) {
+  const invitation = await prisma.invitation.findUnique({
+    where: { slug },
+    include: {
+      gallery: {
+        orderBy: { order: "asc" },
+      },
+      rsvpResponses: {
+        orderBy: { createdAt: "desc" },
+      },
+      guestbookEntries: {
+        where: { isHidden: false },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  if (!invitation) return null;
+
+  const coverImage = invitation.gallery.find((img) => img.isCover)?.url;
+
+  return {
+    id: invitation.id,
+    slug: invitation.slug || "",
+    groomName: invitation.groomName,
+    brideName: invitation.brideName,
+    groomFather: invitation.groomFather ?? undefined,
+    groomMother: invitation.groomMother ?? undefined,
+    brideFather: invitation.brideFather ?? undefined,
+    brideMother: invitation.brideMother ?? undefined,
+    weddingDate: invitation.weddingDate
+      ? invitation.weddingDate.toISOString().split("T")[0]
+      : "",
+    weddingTime: invitation.weddingTime || "",
+    venueName: invitation.venueName || "",
+    venueAddress: invitation.venueAddress || "",
+    venueFloor: invitation.venueFloor ?? undefined,
+    venueLat: invitation.venueLat ?? undefined,
+    venueLng: invitation.venueLng ?? undefined,
+    message: invitation.invitationMsg || "",
+    theme: invitation.theme,
+    rsvpEnabled: (invitation.settings as { rsvp?: { enabled?: boolean } })?.rsvp?.enabled ?? true,
+    guestbookEnabled: (invitation.settings as { guestbook?: { enabled?: boolean } })?.guestbook?.enabled ?? true,
+    coverImage: coverImage || "",
+    gallery: invitation.gallery.map((img) => img.url),
   };
 }
 
 export default async function InvitationPage({ params }: Props) {
   const { slug } = await params;
-  const invitation = slug === "minyoung-jihoon" ? MOCK_INVITATION : null;
+  const invitation = await getInvitation(slug);
 
   if (!invitation) {
     notFound();

@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
+import { KakaoMap } from "@/components/map/KakaoMap";
+import { openKakaoMap, openNaverMap, openTMap, copyAddress } from "@/lib/navigation";
 
 interface Invitation {
   id: string;
@@ -29,6 +32,14 @@ interface Invitation {
   gallery: string[];
 }
 
+interface GuestbookEntry {
+  id: string;
+  name: string;
+  message: string;
+  isSecret: boolean;
+  createdAt: string;
+}
+
 export function InvitationView({ invitation }: { invitation: Invitation }) {
   const weddingDate = new Date(invitation.weddingDate);
   const daysUntil = Math.ceil((weddingDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -46,7 +57,7 @@ export function InvitationView({ invitation }: { invitation: Invitation }) {
       <GallerySection images={invitation.gallery} />
       <LocationSection invitation={invitation} />
       {invitation.rsvpEnabled && <RsvpSection invitation={invitation} />}
-      {invitation.guestbookEnabled && <GuestbookSection />}
+      {invitation.guestbookEnabled && <GuestbookSection slug={invitation.slug} />}
       <FooterSection invitation={invitation} />
     </div>
   );
@@ -193,8 +204,22 @@ function GallerySection({ images }: { images: string[] }) {
 }
 
 function LocationSection({ invitation }: { invitation: Invitation }) {
-  const mapUrl = `https://map.kakao.com/link/search/${encodeURIComponent(invitation.venueName)}`;
-  const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(invitation.venueAddress)}`;
+  const hasCoordinates = invitation.venueLat && invitation.venueLng;
+  
+  const navigationParams = {
+    lat: invitation.venueLat || 0,
+    lng: invitation.venueLng || 0,
+    name: invitation.venueName,
+  };
+
+  const handleCopyAddress = async () => {
+    const success = await copyAddress(invitation.venueAddress, invitation.venueName);
+    if (success) {
+      toast.success("주소가 복사되었습니다");
+    } else {
+      toast.error("주소 복사에 실패했습니다");
+    }
+  };
 
   return (
     <section className="py-16 px-6 bg-white">
@@ -210,30 +235,52 @@ function LocationSection({ invitation }: { invitation: Invitation }) {
         {invitation.venueFloor && <p className="text-gray-500 mb-2">{invitation.venueFloor}</p>}
         <p className="text-gray-600 text-sm mb-6">{invitation.venueAddress}</p>
 
-        <div className="aspect-video bg-gray-100 rounded-xl mb-6 flex items-center justify-center text-gray-400">
-          지도 영역 (카카오맵 연동 예정)
-        </div>
+        {hasCoordinates ? (
+          <KakaoMap
+            lat={invitation.venueLat!}
+            lng={invitation.venueLng!}
+            venueName={invitation.venueName}
+            venueAddress={invitation.venueAddress}
+            className="w-full h-64 rounded-xl mb-6"
+          />
+        ) : (
+          <div className="aspect-video bg-gray-100 rounded-xl mb-6 flex items-center justify-center text-gray-400">
+            <div className="text-center">
+              <svg className="w-8 h-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <p className="text-sm">{invitation.venueName}</p>
+            </div>
+          </div>
+        )}
 
-        <div className="flex gap-3 justify-center">
-          <a
-            href={mapUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-yellow-400 text-brown-900 text-sm font-medium rounded-lg"
-          >
-            카카오맵
-          </a>
-          <a
-            href={naverMapUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg"
-          >
-            네이버지도
-          </a>
+        <div className="flex flex-wrap gap-2 justify-center mb-4">
+          {hasCoordinates && (
+            <>
+              <button
+                onClick={() => openKakaoMap(navigationParams)}
+                className="px-4 py-2 bg-yellow-400 text-brown-900 text-sm font-medium rounded-lg hover:bg-yellow-500 transition-colors"
+              >
+                카카오맵
+              </button>
+              <button
+                onClick={() => openNaverMap(navigationParams)}
+                className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors"
+              >
+                네이버지도
+              </button>
+              <button
+                onClick={() => openTMap(navigationParams)}
+                className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                T맵
+              </button>
+            </>
+          )}
           <button
-            onClick={() => navigator.clipboard.writeText(invitation.venueAddress)}
-            className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg"
+            onClick={handleCopyAddress}
+            className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
           >
             주소복사
           </button>
@@ -251,11 +298,45 @@ function RsvpSection({ invitation }: { invitation: Invitation }) {
     mealCount: 1,
     side: "groom" as "groom" | "bride",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    
+    if (!formData.name.trim()) {
+      toast.error("성함을 입력해주세요");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`/api/i/${invitation.slug}/rsvp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone || undefined,
+          attending: formData.attending,
+          mealCount: formData.attending ? formData.mealCount : 0,
+          side: formData.side,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error?.message || "참석 여부 전달에 실패했습니다");
+      }
+
+      setIsSubmitted(true);
+      toast.success(result.data.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "오류가 발생했습니다");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -384,9 +465,10 @@ function RsvpSection({ invitation }: { invitation: Invitation }) {
 
           <button
             type="submit"
-            className="w-full py-4 bg-coral-500 text-white font-medium rounded-xl hover:bg-coral-600 transition-colors"
+            disabled={isSubmitting}
+            className="w-full py-4 bg-coral-500 text-white font-medium rounded-xl hover:bg-coral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            전달하기
+            {isSubmitting ? "전달 중..." : "전달하기"}
           </button>
         </form>
       </motion.div>
@@ -394,17 +476,69 @@ function RsvpSection({ invitation }: { invitation: Invitation }) {
   );
 }
 
-function GuestbookSection() {
-  const [messages] = useState([
-    { id: 1, name: "김서연", message: "결혼 축하해요! 행복하게 살아요 💕", createdAt: "2025-01-07" },
-    { id: 2, name: "이준호", message: "드디어 결혼이네! 진심으로 축하해 친구야!", createdAt: "2025-01-06" },
-  ]);
+function GuestbookSection({ slug }: { slug: string }) {
+  const [entries, setEntries] = useState<GuestbookEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [newMessage, setNewMessage] = useState({ name: "", password: "", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchEntries = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/i/${slug}/guestbook`);
+      if (response.ok) {
+        const result = await response.json();
+        setEntries(result.data || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch guestbook:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [slug]);
+
+  useEffect(() => {
+    fetchEntries();
+  }, [fetchEntries]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("방명록이 등록되었습니다!");
-    setNewMessage({ name: "", password: "", message: "" });
+    
+    if (!newMessage.name.trim() || !newMessage.password.trim() || !newMessage.message.trim()) {
+      toast.error("모든 항목을 입력해주세요");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`/api/i/${slug}/guestbook`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMessage),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error?.message || "방명록 등록에 실패했습니다");
+      }
+
+      toast.success("방명록이 등록되었습니다");
+      setNewMessage({ name: "", password: "", message: "" });
+      fetchEntries();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "오류가 발생했습니다");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
   };
 
   return (
@@ -418,15 +552,26 @@ function GuestbookSection() {
         <p className="text-coral-500 text-sm tracking-widest text-center mb-8">GUESTBOOK</p>
 
         <div className="space-y-4 mb-8">
-          {messages.map((msg) => (
-            <div key={msg.id} className="bg-cream-bg rounded-xl p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-medium text-brown-900">{msg.name}</span>
-                <span className="text-xs text-gray-400">{msg.createdAt}</span>
-              </div>
-              <p className="text-gray-600 text-sm">{msg.message}</p>
+          {isLoading ? (
+            <div className="text-center py-8 text-gray-400">
+              <div className="animate-spin w-6 h-6 border-2 border-coral-400 border-t-transparent rounded-full mx-auto mb-2" />
+              불러오는 중...
             </div>
-          ))}
+          ) : entries.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              첫 번째 축하 메시지를 남겨주세요!
+            </div>
+          ) : (
+            entries.map((entry) => (
+              <div key={entry.id} className="bg-cream-bg rounded-xl p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium text-brown-900">{entry.name}</span>
+                  <span className="text-xs text-gray-400">{formatDate(entry.createdAt)}</span>
+                </div>
+                <p className="text-gray-600 text-sm">{entry.message}</p>
+              </div>
+            ))
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="bg-gray-50 rounded-2xl p-5 space-y-4">
@@ -458,9 +603,10 @@ function GuestbookSection() {
           />
           <button
             type="submit"
-            className="w-full py-3 bg-coral-500 text-white text-sm font-medium rounded-lg hover:bg-coral-600 transition-colors"
+            disabled={isSubmitting}
+            className="w-full py-3 bg-coral-500 text-white text-sm font-medium rounded-lg hover:bg-coral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            등록하기
+            {isSubmitting ? "등록 중..." : "등록하기"}
           </button>
         </form>
       </motion.div>
@@ -478,9 +624,13 @@ function FooterSection({ invitation }: { invitation: Invitation }) {
     }
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    alert("링크가 복사되었습니다!");
+  const handleCopyLink = async () => {
+    const success = await copyAddress(window.location.href);
+    if (success) {
+      toast.success("링크가 복사되었습니다");
+    } else {
+      toast.error("링크 복사에 실패했습니다");
+    }
   };
 
   return (

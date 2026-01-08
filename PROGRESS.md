@@ -59,13 +59,14 @@
 
 ---
 
-## Phase 2: 필수 기능 (진행 중)
+## Phase 2: 필수 기능 ✅ (완료)
 
 | 스펙 | 상태 | 구현 파일 | 비고 |
 |------|------|-----------|------|
 | 24-image-upload-pipeline.md | ✅ 완료 | `lib/r2/*`, `lib/upload/*`, `app/api/upload/*` | Cloudflare R2 연동, Presigned URL |
-| 25-map-integration.md | ⏳ 대기 | - | 카카오맵 API |
-| 01-mobile-invitation-core.md | ⏳ 대기 | - | Gallery 실제 이미지, Guestbook DB 연동 |
+| 25-map-integration.md | ✅ 완료 | `lib/kakao/*`, `lib/navigation.ts`, `components/map/*` | 카카오맵 SDK, 길찾기 딥링크 |
+| 06-api-design.md | ✅ 완료 | `app/api/i/[slug]/rsvp/*`, `app/api/i/[slug]/guestbook/*` | RSVP/Guestbook Public API |
+| 01-mobile-invitation-core.md | ✅ 완료 | `app/i/[slug]/InvitationView.tsx` | 지도 연동, RSVP/Guestbook DB 연동 |
 
 ### Phase 2 구현 상세
 
@@ -84,6 +85,49 @@
   - 이미지 그리드 표시
   - 대표 사진 설정
   - 이미지 삭제
+
+#### Map Integration (25-map-integration.md)
+- [x] 카카오맵 유틸리티 (`lib/kakao/map.ts`)
+  - 장소 검색 (searchPlaces)
+  - 주소 → 좌표 변환 (addressToCoords)
+  - 좌표 → 주소 변환 (coordsToAddress)
+  - 정적 지도 이미지 URL
+- [x] 길찾기 딥링크 (`lib/navigation.ts`)
+  - 카카오맵 앱/웹 연동
+  - 네이버지도 앱/웹 연동
+  - T맵 앱/웹 연동
+  - 주소 복사 기능
+  - 카카오 인앱 브라우저 대응
+- [x] 지도 컴포넌트 (`components/map/KakaoMap.tsx`)
+  - SDK 동적 로딩 (lazyOnload)
+  - 마커 및 인포윈도우
+  - 에러 폴백 UI
+  - 접근성 지원 (aria-label)
+
+#### Public API (06-api-design.md)
+- [x] RSVP API (`app/api/i/[slug]/rsvp/route.ts`)
+  - POST: 참석 여부 제출
+  - 유효성 검증 (이름, side, attending 필수)
+  - 청첩장 상태 확인 (PUBLISHED만 허용)
+- [x] Guestbook API (`app/api/i/[slug]/guestbook/route.ts`)
+  - GET: 방명록 목록 (페이지네이션)
+  - POST: 방명록 작성
+  - 비밀 메시지 마스킹
+  - 500자 제한
+
+#### Invitation Viewer Update
+- [x] LocationSection 업데이트
+  - KakaoMap 컴포넌트 연동
+  - 카카오맵/네이버지도/T맵 길찾기 버튼
+  - 주소 복사 (toast 피드백)
+- [x] RsvpSection API 연동
+  - POST /api/i/[slug]/rsvp 호출
+  - 로딩/에러 상태 처리
+  - 성공 시 감사 메시지
+- [x] GuestbookSection API 연동
+  - GET /api/i/[slug]/guestbook 호출
+  - POST 후 자동 새로고침
+  - 로딩 스피너, 빈 상태 UI
 
 ---
 

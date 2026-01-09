@@ -1,307 +1,195 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { Check } from "lucide-react";
 
 const themes = [
   {
     id: "minimal",
     name: "미니멀",
-    emoji: "🤍",
-    color: "#F8F8F8",
-    accent: "#E8E8E8",
-    description: "깔끔하고 세련된 여백의 미학",
+    description: "본질에 집중한 간결함",
     image: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop",
+    bgColor: "#FAFAFA",
   },
   {
     id: "classic",
     name: "클래식",
-    emoji: "🌸",
-    color: "#FFF5F0",
-    accent: "#FFE4D6",
-    description: "따뜻하고 우아한 전통의 아름다움",
+    description: "변하지 않는 우아함",
     image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=600&auto=format&fit=crop",
+    bgColor: "#FFF8F5",
   },
   {
     id: "modern",
     name: "모던",
-    emoji: "✨",
-    color: "#F0F4F8",
-    accent: "#E2E8F0",
-    description: "트렌디하고 감각적인 도시적 무드",
+    description: "세련된 감각의 조화",
     image: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=600&auto=format&fit=crop",
+    bgColor: "#F5F7FA",
   },
 ];
 
 export function PreviewSection() {
   const [activeTheme, setActiveTheme] = useState(themes[1]);
-  const [isHovering, setIsHovering] = useState(false);
-  const phoneRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section id="preview" className="py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-dreamy" />
-      <div className="absolute inset-0 bg-gradient-mesh opacity-30" />
-      
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-        className="absolute top-20 right-20 w-96 h-96 border border-dashed border-coral-200/20 rounded-full"
-      />
-      <motion.div
-        animate={{ rotate: -360 }}
-        transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-20 left-20 w-64 h-64 border border-coral-200/20 rounded-full"
-      />
-
-      <div className="max-w-7xl mx-auto relative z-10">
+    <section
+      id="preview"
+      ref={sectionRef}
+      className="py-32 md:py-40 px-5 bg-[var(--color-cream-bg)]"
+    >
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
         >
-          <motion.span 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 text-coral-500 font-medium text-sm tracking-widest uppercase bg-white/80 backdrop-blur-sm px-6 py-2 rounded-full shadow-dreamy mb-6"
-          >
-            <motion.span animate={{ rotate: [0, 360] }} transition={{ duration: 3, repeat: Infinity }}>
-              ✦
-            </motion.span>
-            Preview
-          </motion.span>
-
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display text-brown-900 mb-6">
-            직접 <span className="text-gradient-romantic">확인</span>해보세요
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[var(--color-coral-400)] rounded-full text-sm text-[var(--color-brown-700)] mb-6">
+            Themes
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-brown-900)] mb-4 leading-tight">
+            취향에 맞는
+            <br />
+            스타일을 찾아보세요
           </h2>
-
-          <p className="text-gray-500 text-lg sm:text-xl max-w-2xl mx-auto">
-            다양한 테마 중 당신의 이야기에
-            <br className="sm:hidden" />
-            가장 어울리는 스타일을 찾아보세요.
+          <p className="text-[var(--color-brown-500)] text-lg max-w-md mx-auto">
+            어떤 분위기를 원하시나요? 가장 어울리는 디자인을 골라보세요.
           </p>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+        {/* Preview Content */}
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          {/* Phone Mockup */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative"
-            ref={phoneRef}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+            initial={{ opacity: 0, x: -30 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="flex-shrink-0"
           >
-            <motion.div
-              animate={{ 
-                scale: isHovering ? 1.05 : 1,
-                rotate: isHovering ? 2 : 0
-              }}
-              transition={{ duration: 0.4 }}
-              className="relative"
-            >
-              <motion.div
-                animate={{ 
-                  opacity: [0.3, 0.6, 0.3],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="absolute -inset-8 rounded-[4rem] blur-3xl"
-                style={{ backgroundColor: `${activeTheme.color}80` }}
-              />
+            <div className="relative w-[280px] sm:w-[300px]">
+              {/* Phone Frame */}
+              <div className="relative bg-white rounded-[44px] border border-[var(--color-coral-400)] shadow-romantic overflow-hidden">
+                <div className="aspect-[9/19.5] relative">
+                  {/* Notch */}
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-7 bg-black rounded-full z-20" />
 
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                className="absolute -inset-12 border border-dashed border-coral-200/30 rounded-[5rem]"
-              />
-
-              <div className="relative w-[300px] h-[620px] bg-gray-900 rounded-[3.5rem] border-[8px] border-gray-800 shadow-romantic overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-7 bg-gray-950 rounded-b-3xl z-20" />
-
-                <div className="absolute inset-0 bg-white overflow-hidden flex flex-col">
-                  <div className="h-10 w-full absolute top-0 z-10 flex justify-between px-8 items-center text-[11px] font-medium text-black/40">
-                    <span>9:41</span>
-                    <div className="flex items-center gap-1">
-                      <div className="w-4 h-2 bg-black/20 rounded-sm" />
-                    </div>
-                  </div>
-
+                  {/* Screen Content */}
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeTheme.id}
-                      initial={{ opacity: 0, scale: 1.1 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.5 }}
-                      className="relative h-[58%] w-full"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0"
+                      style={{ backgroundColor: activeTheme.bgColor }}
                     >
-                      <Image
-                        src={activeTheme.image}
-                        alt={activeTheme.name}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+                      {/* Status Bar */}
+                      <div className="h-12 flex justify-between items-end px-6 text-[11px] font-medium text-[#191F28]/50">
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1">
+                          <div className="w-4 h-2 bg-black/20 rounded-sm" />
+                        </div>
+                      </div>
+
+                      {/* Image */}
+                      <div className="relative h-[52%] mt-2">
+                        <Image
+                          src={activeTheme.image}
+                          alt={activeTheme.name}
+                          fill
+                          className="object-cover"
+                        />
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            background: `linear-gradient(to top, ${activeTheme.bgColor} 0%, transparent 50%)`,
+                          }}
+                        />
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 text-center -mt-6 relative">
+                        <p className="text-xs text-[#8B95A1]">우리의 시작</p>
+                        <h3 className="text-xl font-bold text-[#191F28] mt-1">민영 & 지훈</h3>
+                        <p className="text-xs text-[#8B95A1] mt-2">2026년 10월 26일 토요일</p>
+
+                        <button className="w-full mt-5 py-3.5 bg-[#191F28] text-white text-sm font-medium rounded-xl">
+                          참석 여부 알리기
+                        </button>
+                      </div>
                     </motion.div>
                   </AnimatePresence>
-
-                  <motion.div 
-                    layout
-                    className="flex-1 p-6 flex flex-col items-center text-center pt-6 relative"
-                    style={{ backgroundColor: activeTheme.color }}
-                  >
-                    <div className="absolute -top-6 left-0 right-0 h-6 rounded-t-[2rem]" style={{ backgroundColor: activeTheme.color }} />
-                    
-                    <motion.p 
-                      layout
-                      className="text-sm font-serif italic text-gray-500"
-                    >
-                      우리의 시작
-                    </motion.p>
-                    <motion.h3 
-                      layout
-                      className="text-2xl font-display text-gray-800 leading-tight mt-1"
-                    >
-                      민영 & 지훈
-                    </motion.h3>
-                    <motion.p 
-                      layout
-                      className="text-xs text-gray-500 font-medium tracking-wider mt-2"
-                    >
-                      2026년 10월 26일 토요일
-                    </motion.p>
-
-                    <motion.div layout className="mt-5 w-full space-y-2">
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        className="w-full h-11 rounded-full flex items-center justify-center text-sm font-medium cursor-pointer transition-all"
-                        style={{ backgroundColor: activeTheme.accent }}
-                      >
-                        <span className="text-brown-900">참석 여부 알리기</span>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
                 </div>
-
-                <div className="absolute top-28 -left-[9px] w-[9px] h-12 bg-gray-800 rounded-l-md" />
-                <div className="absolute top-44 -left-[9px] w-[9px] h-16 bg-gray-800 rounded-l-md" />
-                <div className="absolute top-32 -right-[9px] w-[9px] h-24 bg-gray-800 rounded-r-md" />
               </div>
-            </motion.div>
-
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="absolute -top-4 -right-4 text-4xl"
-            >
-              {activeTheme.emoji}
-            </motion.div>
+            </div>
           </motion.div>
 
+          {/* Theme Selector */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex-1 max-w-lg"
+            initial={{ opacity: 0, x: 30 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex-1 w-full max-w-md"
           >
-            <h3 className="text-3xl font-display text-brown-900 mb-8 flex items-center gap-3">
+            <h3 className="text-xl font-semibold text-[#191F28] mb-6">
               테마 선택
-              <motion.span
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-2xl"
-              >
-                🎨
-              </motion.span>
             </h3>
 
-            <div className="space-y-4">
-              {themes.map((theme, index) => (
-                <motion.button
+            <div className="space-y-3">
+              {themes.map((theme) => (
+                <button
                   key={theme.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
                   onClick={() => setActiveTheme(theme)}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full p-5 rounded-2xl border-2 transition-all duration-300 flex items-center gap-5 text-left relative overflow-hidden ${
+                  className={`w-full p-4 rounded-2xl border text-left transition-all duration-200 flex items-center gap-4 ${
                     activeTheme.id === theme.id
-                      ? "border-coral-400 bg-gradient-to-r from-coral-50 to-rose-light shadow-dreamy"
-                      : "border-gray-100 bg-white/80 backdrop-blur-sm hover:border-coral-200 hover:shadow-soft"
+                      ? "bg-[var(--color-rose-light)] border-[var(--color-coral-500)] shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+                      : "bg-white border-[var(--color-coral-400)] border-opacity-20 hover:border-opacity-100"
                   }`}
                 >
-                  <motion.div
-                    animate={activeTheme.id === theme.id ? { scale: [1, 1.1, 1] } : {}}
-                    transition={{ duration: 1, repeat: Infinity }}
-                    className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center text-2xl shadow-soft"
-                    style={{ backgroundColor: theme.color }}
-                  >
-                    {theme.emoji}
-                  </motion.div>
+                  {/* Color Preview */}
+                  <div
+                    className="w-12 h-12 rounded-xl flex-shrink-0"
+                    style={{ backgroundColor: theme.bgColor }}
+                  />
 
-                  <div className="flex-1">
-                    <p className="font-display text-lg text-brown-900">{theme.name}</p>
-                    <p className="text-sm text-gray-500 mt-0.5">{theme.description}</p>
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[var(--color-brown-900)]">{theme.name}</p>
+                    <p className="text-sm text-[var(--color-brown-500)] truncate">{theme.description}</p>
                   </div>
 
-                  <AnimatePresence>
-                    {activeTheme.id === theme.id && (
-                      <motion.div
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        exit={{ scale: 0, rotate: 180 }}
-                        className="w-8 h-8 rounded-full bg-coral-500 flex items-center justify-center"
-                      >
-                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
+                  {/* Check */}
+                  {activeTheme.id === theme.id && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 bg-[#191F28] rounded-full flex items-center justify-center flex-shrink-0"
+                    >
+                      <Check className="w-4 h-4 text-white" strokeWidth={2.5} />
+                    </motion.div>
+                  )}
+                </button>
               ))}
             </div>
 
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="mt-10 p-8 bg-white/80 backdrop-blur-sm rounded-3xl border border-coral-100 shadow-dreamy relative overflow-hidden"
-            >
-              <motion.div
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-transparent via-coral-100/50 to-transparent"
-              />
-
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">🎁</span>
-                  <div>
-                    <p className="font-display text-brown-900">50개 이상의 프리미엄 테마</p>
-                    <p className="text-sm text-gray-500">더 많은 스타일이 기다리고 있어요</p>
-                  </div>
+            {/* More Themes CTA */}
+            <div className="mt-8 p-6 bg-gradient-to-br from-[var(--color-rose-light)] to-[var(--color-sage-light)] rounded-2xl border border-[var(--color-coral-400)]">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl">🎁</span>
+                <div>
+                  <p className="font-semibold text-[var(--color-brown-900)]">더 많은 디자인이 있어요</p>
+                  <p className="text-sm text-[var(--color-brown-700)]">당신에게 딱 맞는 테마를 발견해보세요.</p>
                 </div>
-
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 bg-gradient-to-r from-coral-500 to-coral-400 text-white rounded-full font-medium text-lg shadow-lg shadow-coral-500/25 btn-romantic"
-                >
-                  모든 테마 둘러보기 →
-                </motion.button>
               </div>
-            </motion.div>
+              <button className="w-full py-4 bg-[var(--color-coral-500)] text-white font-semibold rounded-xl btn-romantic active:scale-[1.02] transition-all">
+                테마 전체 보기
+              </button>
+            </div>
           </motion.div>
         </div>
       </div>

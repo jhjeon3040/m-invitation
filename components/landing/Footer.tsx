@@ -5,9 +5,9 @@ import { useState } from "react";
 
 const footerLinks = {
   product: ["기능 소개", "테마 갤러리", "가격 안내", "업데이트"],
-  support: ["자주 묻는 질문", "1:1 문의", "이용 가이드", "공지사항"],
-  company: ["회사 소개", "채용", "블로그", "파트너십"],
-  legal: ["이용약관", "개인정보처리방침", "쿠키 정책"],
+  support: ["자주 묻는 질문", "1:1 문의", "이용 가이드"],
+  company: ["회사 소개", "채용", "블로그"],
+  legal: ["이용약관", "개인정보처리방침"],
 };
 
 export function Footer() {
@@ -23,25 +23,25 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-cream-dark border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+    <footer className="bg-gradient-to-br from-[var(--color-sage-light)] to-[var(--color-cream-bg)] border-t border-[var(--color-coral-400)]">
+      <div className="max-w-5xl mx-auto px-5 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-10">
+          {/* Brand & Newsletter */}
           <div className="col-span-2 space-y-6">
-            <Link href="/" className="inline-flex items-center gap-1">
-              <span className="text-3xl font-display font-bold text-brown-900">
-                연정
-              </span>
-              <span className="text-coral-500 text-3xl">.</span>
+            <Link href="/" className="inline-flex items-center gap-0.5">
+              <span className="text-xl font-bold text-[var(--color-brown-900)]">연정</span>
+              <span className="text-xl font-bold text-[var(--color-coral-500)]">.</span>
             </Link>
 
-            <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
-              사랑의 시작을 담다.
+            <p className="text-sm text-[var(--color-brown-500)] leading-relaxed max-w-xs">
+              소중한 순간을 가장 아름답게.
               <br />
-              당신의 이야기를 가장 아름답게 전하는 프리미엄 모바일 청첩장.
+              프리미엄 모바일 청첩장 서비스.
             </p>
 
+            {/* Newsletter */}
             <div className="space-y-3">
-              <p className="text-sm font-medium text-brown-900">뉴스레터 구독</p>
+              <p className="text-sm font-medium text-[var(--color-brown-900)]">뉴스레터 구독</p>
               {!isSubscribed ? (
                 <form onSubmit={handleSubscribe} className="flex gap-2">
                   <input
@@ -49,31 +49,32 @@ export function Footer() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="이메일 주소"
-                    className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:border-coral-400 transition-colors"
+                    className="flex-1 px-4 py-3 bg-white border border-[var(--color-coral-400)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-coral-500)] transition-colors"
                   />
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-coral-500 text-white text-sm font-medium rounded-full hover:bg-coral-600 transition-colors"
+                    className="px-5 py-3 bg-[var(--color-coral-500)] text-white text-sm font-medium rounded-xl btn-romantic active:scale-[1.02] transition-all"
                   >
                     구독
                   </button>
                 </form>
               ) : (
-                <p className="text-coral-500 text-sm">
-                  구독해주셔서 감사합니다! 💕
+                <p className="text-[var(--color-coral-500)] text-sm font-medium">
+                  구독해주셔서 감사합니다!
                 </p>
               )}
             </div>
           </div>
 
+          {/* Links */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-brown-900">제품</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-brown-900)]">제품</h4>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link}>
                   <Link
                     href="#"
-                    className="text-sm text-gray-500 hover:text-coral-500 transition-colors"
+                    className="text-sm text-[var(--color-brown-500)] hover:text-[var(--color-coral-500)] transition-colors"
                   >
                     {link}
                   </Link>
@@ -83,13 +84,13 @@ export function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-brown-900">고객지원</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-brown-900)]">고객지원</h4>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link}>
                   <Link
                     href="#"
-                    className="text-sm text-gray-500 hover:text-coral-500 transition-colors"
+                    className="text-sm text-[var(--color-brown-500)] hover:text-[var(--color-coral-500)] transition-colors"
                   >
                     {link}
                   </Link>
@@ -99,13 +100,13 @@ export function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-brown-900">회사</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-brown-900)]">회사</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link}>
                   <Link
                     href="#"
-                    className="text-sm text-gray-500 hover:text-coral-500 transition-colors"
+                    className="text-sm text-[var(--color-brown-500)] hover:text-[var(--color-coral-500)] transition-colors"
                   >
                     {link}
                   </Link>
@@ -115,13 +116,13 @@ export function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-brown-900">법적 고지</h4>
+            <h4 className="text-sm font-semibold text-[var(--color-brown-900)]">법적 고지</h4>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link}>
                   <Link
                     href="#"
-                    className="text-sm text-gray-500 hover:text-coral-500 transition-colors"
+                    className="text-sm text-[var(--color-brown-500)] hover:text-[var(--color-coral-500)] transition-colors"
                   >
                     {link}
                   </Link>
@@ -131,16 +132,18 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-200">
+        {/* Bottom */}
+        <div className="mt-12 pt-8 border-t border-[var(--color-coral-400)] border-opacity-30">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-gray-400">
-              © 2026 연정. 사랑의 시작을 함께합니다.
+            <p className="text-xs text-[var(--color-brown-500)]">
+              2026 연정. All rights reserved.
             </p>
 
+            {/* Social Icons */}
             <div className="flex items-center gap-4">
               <a
                 href="#"
-                className="text-gray-400 hover:text-coral-500 transition-colors"
+                className="text-[var(--color-brown-500)] hover:text-[var(--color-coral-500)] transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -149,7 +152,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                className="text-gray-400 hover:text-coral-500 transition-colors"
+                className="text-[var(--color-brown-500)] hover:text-[var(--color-coral-500)] transition-colors"
                 aria-label="YouTube"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -158,7 +161,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                className="text-gray-400 hover:text-coral-500 transition-colors"
+                className="text-[var(--color-brown-500)] hover:text-[var(--color-coral-500)] transition-colors"
                 aria-label="카카오톡"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { UserMenu } from "@/components/layout/UserMenu";
 
 interface GuestbookEntry {
   id: string;
@@ -104,7 +105,7 @@ export default function GuestbookManagementPage() {
             <span className="hidden sm:inline">대시보드</span>
           </Link>
           <h1 className="font-display text-brown-900">방명록 관리</h1>
-          <div className="w-20" />
+          <UserMenu />
         </div>
       </header>
 

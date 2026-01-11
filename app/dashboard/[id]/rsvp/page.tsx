@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { UserMenu } from "@/components/layout/UserMenu";
 
 interface RsvpResponse {
   id: string;
@@ -103,12 +104,15 @@ export default function RsvpManagementPage() {
             <span className="hidden sm:inline">대시보드</span>
           </Link>
           <h1 className="font-display text-brown-900">RSVP 관리</h1>
-          <button
-            onClick={handleExportCSV}
-            className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            CSV 다운로드
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExportCSV}
+              className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              CSV 다운로드
+            </button>
+            <UserMenu />
+          </div>
         </div>
       </header>
 

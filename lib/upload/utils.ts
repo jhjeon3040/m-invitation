@@ -53,9 +53,9 @@ export interface UploadProgress {
 
 export function uploadWithProgress(
   url: string,
-  file: Blob,
+  formData: FormData,
   onProgress?: (progress: UploadProgress) => void
-): Promise<void> {
+): Promise<Response> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
@@ -70,8 +70,12 @@ export function uploadWithProgress(
     });
 
     xhr.addEventListener("load", () => {
-      if (xhr.status === 200) {
-        resolve();
+      const response = new Response(xhr.responseText, {
+        status: xhr.status,
+        statusText: xhr.statusText,
+      });
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(response);
       } else {
         reject(new Error(`Upload failed: ${xhr.status}`));
       }
@@ -80,9 +84,8 @@ export function uploadWithProgress(
     xhr.addEventListener("error", () => reject(new Error("Network error")));
     xhr.addEventListener("abort", () => reject(new Error("Upload cancelled")));
 
-    xhr.open("PUT", url);
-    xhr.setRequestHeader("Content-Type", "image/jpeg");
-    xhr.send(file);
+    xhr.open("POST", url);
+    xhr.send(formData);
   });
 }
 
@@ -105,44 +108,21 @@ export async function uploadGalleryImage(
 
   const { blob, width, height } = await resizeImage(file);
 
-  const presignResponse = await fetch("/api/upload/presign", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      invitationId,
-      filename: file.name,
-      contentType: "image/jpeg",
-      fileSize: blob.size,
-    }),
-  });
+  const formData = new FormData();
+  formData.append("file", blob, file.name);
+  formData.append("invitationId", invitationId);
+  formData.append("originalName", file.name);
+  formData.append("width", width.toString());
+  formData.append("height", height.toString());
 
-  if (!presignResponse.ok) {
-    const error = await presignResponse.json();
-    throw new Error(error.error || "Failed to get upload URL");
+  const response = await uploadWithProgress("/api/upload", formData, onProgress);
+  const data = await response.json();
+
+  if (!data.key || !data.publicUrl) {
+    throw new Error(data.error || "Upload failed");
   }
 
-  const { uploadUrl, key, publicUrl } = await presignResponse.json();
-
-  await uploadWithProgress(uploadUrl, blob, onProgress);
-
-  const completeResponse = await fetch("/api/upload/complete", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      invitationId,
-      key,
-      originalName: file.name,
-      width,
-      height,
-    }),
-  });
-
-  if (!completeResponse.ok) {
-    const error = await completeResponse.json();
-    throw new Error(error.error || "Failed to complete upload");
-  }
-
-  return { key, publicUrl, width, height };
+  return { key: data.key, publicUrl: data.publicUrl, width, height };
 }
 
 const CONCURRENT_UPLOADS = 3;

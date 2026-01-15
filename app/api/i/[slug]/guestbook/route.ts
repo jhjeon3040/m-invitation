@@ -9,6 +9,14 @@ interface GuestbookRequestBody {
   isSecret?: boolean;
 }
 
+interface GuestbookEntry {
+  id: string;
+  name: string;
+  message: string;
+  isSecret: boolean;
+  createdAt: Date;
+}
+
 function hashPassword(password: string): string {
   return createHash("sha256").update(password).digest("hex");
 }
@@ -80,7 +88,7 @@ export async function GET(
       }),
     ]);
 
-    const maskedEntries = entries.map((entry) => ({
+    const maskedEntries = entries.map((entry: GuestbookEntry) => ({
       ...entry,
       message: entry.isSecret ? "비밀 메시지입니다 💌" : entry.message,
     }));
